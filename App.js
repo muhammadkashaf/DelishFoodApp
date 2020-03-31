@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import SwitchNavigator from './Components/Config/Navigation';
-import VerifyCode from './screens/VerifyCode/VerifyCode';
 
 export default class App extends Component {
   constructor(props) {
@@ -25,7 +24,6 @@ export default class App extends Component {
     return (
       <View style={{ flex: 1 }}>
 
-        {/* <VerifyCode /> */}
         <SwitchNavigator />
       </View>
     );

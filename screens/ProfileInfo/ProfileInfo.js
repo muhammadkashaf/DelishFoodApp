@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Alert, Image } from 'react-native';
 import { Header, Left, Body, Title, Icon, Button, Form, Item, Input, Label } from 'native-base';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import { orange } from '../color';
@@ -20,7 +20,11 @@ export default class ProfileInfo extends Component {
             isVisible: false,
             name: '',
             email: '',
-            contact: ''
+            contact: '',
+            code: "",
+            password: "",
+            newPassword: "",
+            loader: false,
 
         };
 
@@ -31,6 +35,8 @@ export default class ProfileInfo extends Component {
         };
 
     }
+
+
 
 
 
@@ -68,6 +74,51 @@ export default class ProfileInfo extends Component {
     }
 
 
+    changePassword1 = async () => {
+        const { password, newPassword, email, code } = this.state
+        this.setState({ loader: true })
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        if (password != newPassword) {
+            this.setState({ loader: false })
+            Alert.alert("Alert", "Password not Matched")
+        } else {
+
+
+            const formData = new FormData();
+            formData.append("action", "reset_password")
+            formData.append("email", email)
+            formData.append("password1", password)
+            formData.append("password2", newPassword)
+
+            // console.log("email, code, password", email, code, password, newPassword)
+
+            axios.post("http://www.hnh5.xyz/delish/api/password.php", formData)
+                .then(res => {
+                    console.log('*******----', res);
+                    // console.log('*******', res.config);
+                    // console.log('*********', res.status);
+                    console.log('*********', res.data);
+                    console.log('*********', res.data.status);
+
+                    if (res.data.status === true) {
+                        this.setState({ loader: false })
+                        Alert.alert("Alert", "Password Changed successfully")
+                        this.props.navigation.navigate('AuthLoading')
+                    } else {
+                        this.setState({ loader: false })
+                        Alert.alert("Alert", res.message)
+                    }
+                    console.log("Alert", res)
+                })
+                .catch(err => {
+                    this.setState({ loader: false })
+                    console.log("err err err", err)
+                });
+        }
+
+
+    }
 
 
 
@@ -162,26 +213,35 @@ export default class ProfileInfo extends Component {
 
 
 
-                            <Form>
-                                <Item floatingLabel>
-                                    <Label>Enter New Password</Label>
-                                    <Input />
+                            <View style={{ display: 'flex', flexDirection: 'row', width: '100%' }} >
+                                <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}>
+                                    <Image source={require("../../Assets/Images/lockopen.png")} style={{ height: 20, width: 15 }} />
+                                </View>
+                                <Item stackedLabel style={{ width: '80%', borderBottomWidth: 0 }}>
+                                    <Label style={{ marginLeft: 3, color: 'lightgray' }}>Password</Label>
+                                    <Input secureTextEntry value={this.state.password} placeholder="*********" style={{ color: 'gray', width: '100%' }} onChangeText={(e) => { this.setState({ password: e }) }} />
                                 </Item>
-                                <Item floatingLabel last>
-                                    <Label>Confirm Password</Label>
-                                    <Input />
+                            </View>
+
+
+                            <View style={{ display: 'flex', flexDirection: 'row', width: '100%' }} >
+                                <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}>
+                                    <Image source={require("../../Assets/Images/lockopen.png")} style={{ height: 20, width: 15 }} />
+                                </View>
+                                <Item stackedLabel style={{ width: '80%', borderBottomWidth: 0 }}>
+                                    <Label style={{ marginLeft: 3, color: 'lightgray' }}>Confirm Password</Label>
+                                    <Input secureTextEntry value={this.state.newPassword} placeholder="*********" style={{ color: 'gray', width: '100%' }} onChangeText={(e) => { this.setState({ newPassword: e }) }} />
                                 </Item>
-                            </Form>
+                            </View>
 
 
-
-                            <View style={{ alignSelf: 'flex-end', marginTop: '10%' }}>
+                            <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'flex-end', marginTop: '10%' }}>
                                 <TouchableOpacity style={{ marginRight: '5%', width: 100, backgroundColor: '#FFA800', paddingVertical: 20, bottom: 20, marginTop: '2%' }}>
                                     <Text onPress={() => { this.setState({ isVisible: false }) }} style={{ fontWeight: 'bold', color: '#FFFF', textAlign: 'center', }}>CANCEL</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity style={{ marginRight: '5%', width: 100, backgroundColor: '#FFA800', paddingVertical: 20, bottom: 20, marginTop: '2%' }}>
-                                    <Text onPress={() => { this.setState({ isVisible: false }) }} style={{ fontWeight: 'bold', color: '#FFFF', textAlign: 'center', }}>UPDATE</Text>
+                                <TouchableOpacity onPress={this.changePassword1} style={{ marginRight: '5%', width: 100, backgroundColor: '#FFA800', paddingVertical: 20, bottom: 20, marginTop: '2%' }}>
+                                    <Text style={{ fontWeight: 'bold', color: '#FFFF', textAlign: 'center', }}>UPDATE</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
