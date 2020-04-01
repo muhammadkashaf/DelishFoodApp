@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
+
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  TextInput,
+  Button
 } from 'react-native';
 
 import { Icon } from 'native-base';
@@ -12,18 +15,42 @@ import { Icon } from 'native-base';
 import { orange } from '../../ColorTheme/color';
 
 
-
-
+import { connect } from 'react-redux';
+import changeState from '../../../Config/actions/authencationActions';
 
 
 
 class Delishpay extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userName: ''
+    }
+  }
+
+
+  changeState = () => {
+    this.props.changeStateToDispatch(this.state.userName);
+    this.setState({
+      userName: ''
+    })
+  }
+
+  changeUserInput = (e) => {
+    console.log(e);
+
+    this.setState({
+      userName: e
+    })
+
+  }
 
   static navigationOptions = {
     drawerLabel: () => null,
   };
 
-  
+
 
   render() {
     return (
@@ -69,6 +96,32 @@ class Delishpay extends Component {
               </TouchableOpacity>
             </View>
 
+
+
+            <View>
+              <TouchableOpacity>
+                <Text style={{ marginLeft: '5%', paddingTop: '5%', fontSize: 20, color: orange }}>{this.props.userName}</Text>
+              </TouchableOpacity>
+            </View>
+
+
+            <View>
+              <TouchableOpacity onPress={() => this.changeState()}>
+                <Text style={{ marginLeft: '5%', paddingTop: '5%', fontSize: 20, color: orange }}>Change State</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View>
+              <TextInput type='text' placeholder='Enter your name' value={this.state.userName} onChangeText={this.changeUserInput} />
+              <Button
+                onPress={this.changeState}
+                title="Change State"
+                color="#841584"
+
+              />
+            </View>
+
+
           </View>
 
         </ScrollView>
@@ -78,4 +131,23 @@ class Delishpay extends Component {
 }
 
 
-export default Delishpay;
+
+function MapStateToProps(state) {
+  return ({
+    userName: state.authReducer.userName
+  })
+}
+
+
+
+
+function MapDispatchToProps(dispatch) {
+  return ({
+    changeStateToDispatch: (updatedUser) => {
+      dispatch(changeState(updatedUser))
+    }
+  })
+}
+
+
+export default connect(MapStateToProps, MapDispatchToProps)(Delishpay);
