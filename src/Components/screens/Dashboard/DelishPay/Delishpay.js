@@ -98,7 +98,7 @@ class Delishpay extends Component {
 
 
 
-            <View>
+            {/* <View>
               <TouchableOpacity>
                 <Text style={{ marginLeft: '5%', paddingTop: '5%', fontSize: 20, color: orange }}>{this.props.userName}</Text>
               </TouchableOpacity>
@@ -119,7 +119,7 @@ class Delishpay extends Component {
                 color="#841584"
 
               />
-            </View>
+            </View> */}
 
 
           </View>
